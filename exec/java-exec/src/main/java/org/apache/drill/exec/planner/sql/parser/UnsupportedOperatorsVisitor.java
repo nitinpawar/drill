@@ -146,9 +146,9 @@ public class UnsupportedOperatorsVisitor extends SqlShuttle {
                 if (operand instanceof SqlNumericLiteral) {
                   SqlNumericLiteral offsetLiteral = (SqlNumericLiteral) operand;
                   try {
-                    if (offsetLiteral.intValue(true) != 1) {
+                    if (offsetLiteral.intValue(true) >= 1) {
                       // we don't support offset != 1
-                      supported = false;
+                      supported = true;
                     }
                   } catch (AssertionError e) {
                     // we only support offset as an integer

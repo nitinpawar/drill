@@ -289,6 +289,7 @@ public abstract class WindowFunction {
 
   static class Lead extends WindowFunction {
     private LogicalExpression writeInputToLead;
+    private  int leadBy=0;
 
     public Lead() {
       super(Type.LEAD);
@@ -297,19 +298,27 @@ public abstract class WindowFunction {
     @Override
     void generateCode(ClassGenerator<WindowFramer> cg) {
       final GeneratorMapping mapping = GeneratorMapping.create("setupCopyNext", "copyNext", null, null);
-      final MappingSet eval = new MappingSet("inIndex", "outIndex", mapping, mapping);
-
+      if (leadBy >= 1){
+        leadBy = leadBy - 1;
+      }
+      //final MappingSet eval = new MappingSet(String.valueOf(inIndex), String.valueOf(outIndex), mapping, mapping);
+      final MappingSet eval = new MappingSet("inIndex" + " + " + String.valueOf(leadBy), "outIndex", mapping, mapping);
       cg.setMappingSet(eval);
       cg.addExpr(writeInputToLead);
     }
 
     @Override
     boolean materialize(final NamedExpression ne, final VectorContainer batch, final FunctionLookupContext registry)
-        throws SchemaChangeException {
+            throws SchemaChangeException {
       final FunctionCall call = (FunctionCall) ne.getExpr();
       final LogicalExpression input = ExpressionTreeMaterializer.materializeAndCheckErrors(call.args.get(0), batch, registry);
       if (input == null) {
         return false;
+      }
+
+      if (call.args.size() == 2){
+        final LogicalExpression localLeadBy = call.args.get(1)  ;
+        leadBy = numTilesFromExpression(localLeadBy);
       }
 
       // make sure output vector type is Nullable, because we will write a null value in the first row of each partition
@@ -327,14 +336,25 @@ public abstract class WindowFunction {
       return true;
     }
 
+    private int numTilesFromExpression(LogicalExpression numTilesExpr) {
+      if ((numTilesExpr instanceof ValueExpressions.IntExpression)) {
+        int nt = ((ValueExpressions.IntExpression) numTilesExpr).getInt();
+        if (nt > 0) {
+          return nt;
+        }
+      }
+
+      throw UserException.functionError().message("NTILE only accepts positive integer argument").build(logger);
+    }
+
     @Override
     public boolean requiresFullPartition(final WindowPOP pop) {
-      return false;
+      return true;
     }
 
     @Override
     public boolean canDoWork(int numBatchesAvailable, final WindowPOP pop, boolean frameEndReached, boolean partitionEndReached) {
-      return partitionEndReached || numBatchesAvailable > 1;
+      return partitionEndReached || numBatchesAvailable > 1 ;
     }
 
     @Override
