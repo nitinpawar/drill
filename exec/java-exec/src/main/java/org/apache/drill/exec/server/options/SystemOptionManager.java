@@ -93,9 +93,14 @@ public class SystemOptionManager extends BaseOptionManager implements OptionMana
       PlannerSettings.PARQUET_ROWGROUP_FILTER_PUSHDOWN_PLANNING_THRESHOLD,
       PlannerSettings.QUOTING_IDENTIFIERS,
       PlannerSettings.JOIN_OPTIMIZATION,
+      PlannerSettings.FORCE_2PHASE_AGGR, // for testing
+      ExecConstants.HASHAGG_NUM_PARTITIONS_VALIDATOR,
+      ExecConstants.HASHAGG_MAX_MEMORY_VALIDATOR,
+      ExecConstants.HASHAGG_MIN_BATCHES_PER_PARTITION_VALIDATOR, // for tuning
       ExecConstants.CAST_TO_NULLABLE_NUMERIC_OPTION,
       ExecConstants.OUTPUT_FORMAT_VALIDATOR,
       ExecConstants.PARQUET_BLOCK_SIZE_VALIDATOR,
+      ExecConstants.PARQUET_WRITER_USE_SINGLE_FS_BLOCK_VALIDATOR,
       ExecConstants.PARQUET_PAGE_SIZE_VALIDATOR,
       ExecConstants.PARQUET_DICT_PAGE_SIZE_VALIDATOR,
       ExecConstants.PARQUET_WRITER_COMPRESSION_TYPE_VALIDATOR,
@@ -139,6 +144,7 @@ public class SystemOptionManager extends BaseOptionManager implements OptionMana
       ExecConstants.EARLY_LIMIT0_OPT,
       ExecConstants.ENABLE_MEMORY_ESTIMATION,
       ExecConstants.MAX_QUERY_MEMORY_PER_NODE,
+      ExecConstants.MIN_MEMORY_PER_BUFFERED_OP,
       ExecConstants.NON_BLOCKING_OPERATORS_MEMORY,
       ExecConstants.HASH_JOIN_TABLE_FACTOR,
       ExecConstants.HASH_AGG_TABLE_FACTOR,
@@ -170,7 +176,9 @@ public class SystemOptionManager extends BaseOptionManager implements OptionMana
       ExecConstants.QUERY_PROFILE_DEBUG_VALIDATOR,
       ExecConstants.USE_DYNAMIC_UDFS,
       ExecConstants.QUERY_TRANSIENT_STATE_UPDATE,
-      ExecConstants.PERSISTENT_TABLE_UMASK_VALIDATOR
+      ExecConstants.PERSISTENT_TABLE_UMASK_VALIDATOR,
+      ExecConstants.ENABLE_ITERATOR_VALIDATOR,
+      ExecConstants.ENABLE_VECTOR_VALIDATOR
     };
     final Map<String, OptionValidator> tmp = new HashMap<>();
     for (final OptionValidator validator : validators) {

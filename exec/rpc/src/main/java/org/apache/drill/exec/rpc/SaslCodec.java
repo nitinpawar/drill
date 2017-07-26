@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.drill.exec.store.dfs;
 
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapred.Utils;
+package org.apache.drill.exec.rpc;
 
-public class DrillPathFilter extends Utils.OutputFileUtils.OutputFilesFilter {
-  @Override
-  public boolean accept(Path path) {
-    if (path.getName().startsWith(DrillFileSystem.HIDDEN_FILE_PREFIX)) {
-      return false;
-    }
-    if (path.getName().startsWith(DrillFileSystem.DOT_FILE_PREFIX)) {
-      return false;
-    }
-    return super.accept(path);
-  }
+import javax.security.sasl.SaslException;
+
+/*
+ * Codec interface which helps to bind wrap/unwrap call in security handlers to corresponding calls on SaslClient
+ * or SaslServer instances.
+ */
+public interface SaslCodec {
+
+  /** Encrypt data. */
+  byte[] wrap(byte[] data, int offset, int len) throws SaslException;
+
+  /** Decrypt data. */
+  byte[] unwrap(byte[] data, int offset, int len) throws SaslException;
 }

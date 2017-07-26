@@ -513,6 +513,10 @@ public final class UserBitShared {
      * <code>AVRO_SUB_SCAN = 36;</code>
      */
     AVRO_SUB_SCAN(36, 36),
+    /**
+     * <code>PCAP_SUB_SCAN = 37;</code>
+     */
+    PCAP_SUB_SCAN(37, 37),
     ;
 
     /**
@@ -663,6 +667,10 @@ public final class UserBitShared {
      * <code>AVRO_SUB_SCAN = 36;</code>
      */
     public static final int AVRO_SUB_SCAN_VALUE = 36;
+    /**
+     * <code>PCAP_SUB_SCAN = 37;</code>
+     */
+    public static final int PCAP_SUB_SCAN_VALUE = 37;
 
 
     public final int getNumber() { return value; }
@@ -706,6 +714,7 @@ public final class UserBitShared {
         case 34: return WINDOW;
         case 35: return NESTED_LOOP_JOIN;
         case 36: return AVRO_SUB_SCAN;
+        case 37: return PCAP_SUB_SCAN;
         default: return null;
       }
     }
@@ -2178,6 +2187,10 @@ public final class UserBitShared {
        *
        * <pre>
        * equivalent to SQLNonTransientException.
+       * - unexpected internal state
+       * - uncategorized operation
+       * general user action is to contact the Drill team for
+       * assistance
        * </pre>
        */
       SYSTEM(8, 8),
@@ -2186,8 +2199,8 @@ public final class UserBitShared {
        *
        * <pre>
        * equivalent to SQLFeatureNotSupportedException
-       * - type change
-       * - schema change
+       * - unimplemented feature, option, or execution path
+       * - schema change in operator that does not support it
        * </pre>
        */
       UNSUPPORTED_OPERATION(9, 9),
@@ -2286,6 +2299,10 @@ public final class UserBitShared {
        *
        * <pre>
        * equivalent to SQLNonTransientException.
+       * - unexpected internal state
+       * - uncategorized operation
+       * general user action is to contact the Drill team for
+       * assistance
        * </pre>
        */
       public static final int SYSTEM_VALUE = 8;
@@ -2294,8 +2311,8 @@ public final class UserBitShared {
        *
        * <pre>
        * equivalent to SQLFeatureNotSupportedException
-       * - type change
-       * - schema change
+       * - unimplemented feature, option, or execution path
+       * - schema change in operator that does not support it
        * </pre>
        */
       public static final int UNSUPPORTED_OPERATION_VALUE = 9;

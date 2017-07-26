@@ -73,7 +73,7 @@ import org.apache.drill.exec.rpc.BaseRpcOutcomeListener;
 import org.apache.drill.exec.rpc.RpcException;
 import org.apache.drill.exec.rpc.control.ControlTunnel;
 import org.apache.drill.exec.rpc.control.Controller;
-import org.apache.drill.exec.rpc.user.UserServer.UserClientConnection;
+import org.apache.drill.exec.rpc.UserClientConnection;
 import org.apache.drill.exec.server.DrillbitContext;
 import org.apache.drill.exec.server.options.OptionManager;
 import org.apache.drill.exec.testing.ControlsInjector;
@@ -433,7 +433,7 @@ public class Foreman implements Runnable {
 
   private void runPhysicalPlan(final PhysicalPlan plan) throws ExecutionSetupException {
     validatePlan(plan);
-    MemoryAllocationUtilities.setupSortMemoryAllocations(plan, queryContext);
+    MemoryAllocationUtilities.setupBufferedOpsMemoryAllocations(plan, queryContext);
     //Marking endTime of Planning
     queryManager.markPlanningEndTime();
 
