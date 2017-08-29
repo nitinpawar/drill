@@ -289,6 +289,7 @@ public abstract class WindowFunction {
 
   static class Lead extends WindowFunction {
     private LogicalExpression writeInputToLead;
+    private  int leadBy=0;
 
     public Lead() {
       super(Type.LEAD);
@@ -296,8 +297,11 @@ public abstract class WindowFunction {
 
     @Override
     void generateCode(ClassGenerator<WindowFramer> cg) {
+      if (leadBy >= 1){
+        leadBy = leadBy - 1;
+      }
       final GeneratorMapping mapping = GeneratorMapping.create("setupCopyNext", "copyNext", null, null);
-      final MappingSet eval = new MappingSet("inIndex", "outIndex", mapping, mapping);
+      final MappingSet eval = new MappingSet("inIndex" + " + " + String.valueOf(leadBy), "outIndex", mapping, mapping);
 
       cg.setMappingSet(eval);
       cg.addExpr(writeInputToLead);
@@ -311,6 +315,11 @@ public abstract class WindowFunction {
       if (input == null) {
         return false;
       }
+      if (call.args.size() == 2){
+        final LogicalExpression localLeadBy = call.args.get(1)  ;
+        leadBy = numLeadByFromExpression(localLeadBy);
+      }
+
 
       // make sure output vector type is Nullable, because we will write a null value in the first row of each partition
       TypeProtos.MajorType majorType = input.getMajorType();
@@ -325,6 +334,16 @@ public abstract class WindowFunction {
 
       writeInputToLead = new ValueVectorWriteExpression(outputId, input, true);
       return true;
+    }
+    private int numLeadByFromExpression(LogicalExpression numTilesExpr) {
+      if ((numTilesExpr instanceof ValueExpressions.IntExpression)) {
+        int nt = ((ValueExpressions.IntExpression) numTilesExpr).getInt();
+        if (nt > 0) {
+          return nt;
+        }
+      }
+
+      throw UserException.functionError().message("lead only accepts positive integer argument").build(logger);
     }
 
     @Override
